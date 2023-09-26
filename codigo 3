@@ -1,0 +1,54 @@
+// pines
+const byte btn1 = 2;
+const byte btn2 = 3;
+const byte led = 13;
+//cambiar paso
+const int step = 50;
+//temporizadores de rebote de botón
+uint32_t btn1Tmr;
+uint32_t btn2Tmr;
+// banderas para sondeo de botones  
+bool btn1Flag;
+bool btn2Flag;
+//  variable para el led
+uint32_t ledTmr;
+int ledPeriod = 1000; 
+// período inicial 1 segundo
+bool ledState = false;
+void setup () {
+//configurar pines
+pinMode(btn1, INPUT_PULLUP);
+pinMode(btn2, INPUT_PULLUP);
+pinMode(led, OUTPUT);
+}
+void loop() {
+// temporizacion led
+if (millis() - ledTmr >= ledPeriod) {
+ledTmr = millis();
+ledState = !ledState;
+digitalWrite(led, ledState);
+}
+bool btn1State = digitalRead(btn1);
+if (!btn1State && !btn1Flag && millis() - btn1Tmr >= 100) {
+btn1Flag = true;    
+btn1Tmr = millis();
+ledPeriod += step;    
+// aumentar el período
+}
+if (btn1State && btn1Flag) {
+btn1Flag = false;
+btn1Tmr = millis();
+}
+bool btn2State = digitalRead(btn2);
+if (!btn2State && !btn2Flag && millis() - btn2Tmr >= 100) {
+ btn2Flag = true;    
+ btn2Tmr = millis();
+ledPeriod -= step;    
+//  disminuir el período
+}
+if (btn2State && btn2Flag) {
+btn2Flag = false;
+btn2Tmr = millis();
+}
+}
+//Eduardo Moreno
